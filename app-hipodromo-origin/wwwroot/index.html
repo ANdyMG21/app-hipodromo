@@ -1,133 +1,135 @@
 ﻿<!doctype html>
 <html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#6D28D9" />
-  <title>App Hipódromo (Beta)</title>
 
-  assets/app.css
-  assets/app.css
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#6D28D9" />
+    <title>App Hipódromo (Beta)</title>
+
+    <!-- ✅ CSS -->
+    <link rel="preload" href="assets/app.css" as="style" />
+    <link rel="stylesheet" href="assets/app.css" />
 </head>
 
 <body>
-  <div class="bg">
-    <div class="glow g1"></div>
-    <div class="glow g2"></div>
-    <div class="glow g3"></div>
-  </div>
-
-  <header class="topbar">
-    <div class="brand">
-      <div class="logo">🏇</div>
-      <div class="brand-text">
-        <div class="title">App Hipódromo</div>
-        <div class="subtitle">Beta • Planes de apuesta “Smart”</div>
-      </div>
+    <div class="bg">
+        <div class="glow g1"></div>
+        <div class="glow g2"></div>
+        <div class="glow g3"></div>
     </div>
-  </header>
 
-  <main class="container">
-    <section class="grid">
-      <!-- FORM -->
-      <section class="card form">
-        <div class="card-head">
-          <h2>Generador</h2>
-          <p class="muted">Pega el PDF del Hipódromo y define tu estilo de juego.</p>
+    <header class="topbar">
+        <div class="brand">
+            <div class="logo">🏇</div>
+            <div class="brand-text">
+                <div class="title">App Hipódromo</div>
+                <div class="subtitle">Beta • Planes de apuesta “Smart”</div>
+            </div>
         </div>
+    </header>
 
-        <div class="field">
-          <label for="pdfUrl">Link del programa (PDF)</label>
-          <div class="input-wrap">
-            <input id="pdfUrl" type="url" inputmode="url" autocomplete="off"
-              placeholder="https://www.hipodromo.com.mx/desktop/images/pdf/programas/10Programa0322Completo.pdf" />
-            <button class="mini" id="btnPasteExample1" type="button">Ejemplo 1</button>
-            <button class="mini" id="btnPasteExample2" type="button">Ejemplo 2</button>
-          </div>
-          <div class="hint" id="pdfHint">Acepta solo links del Hipódromo (sin parámetros ni #).</div>
-          <div class="error" id="pdfError" aria-live="polite"></div>
-        </div>
+    <main class="container">
+        <section class="grid">
+            <!-- FORM -->
+            <section class="card form">
+                <div class="card-head">
+                    <h2>Generador</h2>
+                    <p class="muted">Pega el PDF del Hipódromo y define tu estilo de juego.</p>
+                </div>
 
-        <div class="row">
-          <div class="field">
-            <label for="venue">Zona</label>
-            <select id="venue">
-              <option value="grada" selected>Grada</option>
-              <option value="restaurantes">Restaurantes</option>
-            </select>
-          </div>
+                <div class="field">
+                    <label for="pdfUrl">Link del programa (PDF)</label>
+                    <div class="input-wrap">
+                        <input id="pdfUrl" type="url" inputmode="url" autocomplete="off"
+                               placeholder="https://www.hipodromo.com.mx/desktop/images/pdf/programas/10Programa0322Completo.pdf" />
+                        <button class="mini" id="btnPasteExample1" type="button">Ejemplo 1</button>
+                        <button class="mini" id="btnPasteExample2" type="button">Ejemplo 2</button>
+                    </div>
+                    <div class="hint" id="pdfHint">Acepta solo links del Hipódromo (sin parámetros ni #).</div>
+                    <div class="error" id="pdfError" aria-live="polite"></div>
+                </div>
 
-          <div class="field">
-            <label for="profile">Perfil</label>
-            <select id="profile">
-              <option value="COBRAR_MAS">Cobrar más</option>
-              <option value="SEGUIDO" selected>Cobrar más seguido</option>
-              <option value="SEGUIDO_EMOCION">Seguido + emoción (20%)</option>
-            </select>
-          </div>
-        </div>
+                <div class="row">
+                    <div class="field">
+                        <label for="venue">Zona</label>
+                        <select id="venue">
+                            <option value="grada" selected>Grada</option>
+                            <option value="restaurantes">Restaurantes</option>
+                        </select>
+                    </div>
 
-        <div class="row">
-          <div class="field">
-            <label for="budgetMin">Presupuesto mínimo</label>
-            <input id="budgetMin" type="number" min="0" step="10" value="200" />
-          </div>
+                    <div class="field">
+                        <label for="profile">Perfil</label>
+                        <select id="profile">
+                            <option value="COBRAR_MAS">Cobrar más</option>
+                            <option value="SEGUIDO" selected>Cobrar más seguido</option>
+                            <option value="SEGUIDO_EMOCION">Seguido + emoción (20%)</option>
+                        </select>
+                    </div>
+                </div>
 
-          <div class="field">
-            <label for="budgetMax">Presupuesto máximo</label>
-            <input id="budgetMax" type="number" min="0" step="10" value="300" />
-          </div>
-        </div>
+                <div class="row">
+                    <div class="field">
+                        <label for="budgetMin">Presupuesto mínimo</label>
+                        <input id="budgetMin" type="number" min="0" step="10" value="200" />
+                    </div>
 
-        <div class="actions">
-          <button id="btnGenerate" class="primary" type="button" disabled>Generar planes</button>
-          <button id="btnClear" class="ghost" type="button">Limpiar</button>
-        </div>
+                    <div class="field">
+                        <label for="budgetMax">Presupuesto máximo</label>
+                        <input id="budgetMax" type="number" min="0" step="10" value="300" />
+                    </div>
+                </div>
 
-        <div class="fineprint">
-          <span class="tag">🔒</span>
-          <span>Si tu link es inválido, te lo marcamos en el momento (al pegar).</span>
-        </div>
-      </section>
+                <div class="actions">
+                    <button id="btnGenerate" class="primary" type="button" disabled>Generar planes</button>
+                    <button id="btnClear" class="ghost" type="button">Limpiar</button>
+                </div>
 
-      <!-- OUTPUT -->
-      <section class="card output">
-        <div class="card-head">
-          <h2>Resultado</h2>
-          <p class="muted">Aquí verás el plan generado y podrás exportarlo a PDF.</p>
-        </div>
+                <div class="fineprint">
+                    <span class="tag">🔒</span>
+                    <span>Si tu link es inválido, te lo marcamos en el momento (al pegar).</span>
+                </div>
+            </section>
 
-        <div class="tabs">
-          <button class="tab active" data-tab="min" type="button">Mínimo</button>
-          <button class="tab" data-tab="opt" type="button">Optimizado</button>
-          <button class="tab" data-tab="max" type="button">Máximo</button>
-        </div>
+            <!-- OUTPUT -->
+            <section class="card output">
+                <div class="card-head">
+                    <h2>Resultado</h2>
+                    <p class="muted">Aquí verás el plan generado y podrás exportarlo a PDF.</p>
+                </div>
 
-        <div class="panel" id="panel">
-          <!-- JS -->
-        </div>
+                <div class="tabs">
+                    <button class="tab active" data-tab="min" type="button">Mínimo</button>
+                    <button class="tab" data-tab="opt" type="button">Optimizado</button>
+                    <button class="tab" data-tab="max" type="button">Máximo</button>
+                </div>
 
-        <div class="divider"></div>
+                <div class="panel" id="panel">
+                    <!-- JS -->
+                </div>
 
-        <div class="output-actions">
-          <button id="btnCopy" class="ghost" type="button" disabled>Copiar para ventanilla</button>
-          <button id="btnRecalc" class="ghost" type="button" disabled>Recalcular</button>
-          <button id="btnExportPdf" class="ghost" type="button" disabled>Exportar PDF</button>
-        </div>
-      </section>
-    </section>
+                <div class="divider"></div>
 
-    <footer class="footer">
-      <span class="muted">© App Hipódromo (Beta).</span>
-    </footer>
-  </main>
+                <div class="output-actions">
+                    <button id="btnCopy" class="ghost" type="button" disabled>Copiar para ventanilla</button>
+                    <button id="btnRecalc" class="ghost" type="button" disabled>Recalcular</button>
+                    <button id="btnExportPdf" class="ghost" type="button" disabled>Exportar PDF</button>
+                </div>
+            </section>
+        </section>
 
-  <div class="toast-wrap" id="toastWrap" aria-live="polite" aria-atomic="true"></div>
+        <footer class="footer">
+            <span class="muted">© App Hipódromo (Beta).</span>
+        </footer>
+    </main>
 
-  <!-- ✅ Iframe oculto para imprimir sin popups -->
-  <iframe id="printFrame" title="print"
-    style="position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden;"></iframe>
+    <div class="toast-wrap" id="toastWrap" aria-live="polite" aria-atomic="true"></div>
 
-  assets/app.js</script>
+    <!-- ✅ Iframe oculto para imprimir sin popups -->
+    <iframe id="printFrame" title="print"
+            style="position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden;"></iframe>
+
+    <script defer src="assets/app.js"></script>
 </body>
 </html>

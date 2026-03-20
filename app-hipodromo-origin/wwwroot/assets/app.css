@@ -1,251 +1,615 @@
-﻿:root{
-  --bg0:#070913;
-  --bg1:#0b1022;
-  --card:#0f1633cc;
-  --card2:#0e1530f0;
-  --stroke:#232a52;
-  --stroke2:#2e2a63;
-  --txt:#E9E7FF;
-  --muted:#B9B3E9;
-  --purple:#7C3AED;
-  --purple2:#A855F7;
-  --pink:#EC4899;
-  --green:#22C55E;
-  --shadow: 0 18px 50px rgba(0,0,0,.45);
-  --r:18px;
+﻿:root {
+    --bg0: #070913;
+    --bg1: #0b1022;
+    --card: #0f1633cc;
+    --card2: #0e1530f0;
+    --stroke: #232a52;
+    --stroke2: #2e2a63;
+    --txt: #E9E7FF;
+    --muted: #B9B3E9;
+    --purple: #7C3AED;
+    --purple2: #A855F7;
+    --pink: #EC4899;
+    --green: #22C55E;
+    --shadow: 0 18px 50px rgba(0,0,0,.45);
+    --r: 18px;
 }
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
-  color:var(--txt);
-  background: radial-gradient(1200px 900px at 20% 10%, #27104a 0%, transparent 60%),
-              radial-gradient(1000px 800px at 85% 20%, #2b124f 0%, transparent 55%),
-              linear-gradient(180deg, var(--bg0), var(--bg1));
-  overflow-x:hidden;
+
+* {
+    box-sizing: border-box
 }
-.bg{position:fixed; inset:0; pointer-events:none; opacity:.85}
-.glow{position:absolute; width:700px; height:700px; filter: blur(70px); border-radius:50%;}
-.g1{left:-220px; top:-220px; background:rgba(124,58,237,.35)}
-.g2{right:-250px; top:-140px; background:rgba(236,72,153,.22)}
-.g3{right:10%; bottom:-320px; background:rgba(168,85,247,.20)}
-.topbar{
-  position:sticky; top:0;
-  display:flex; gap:16px;
-  align-items:center; justify-content:flex-start;
-  padding:16px 22px;
-  backdrop-filter: blur(14px);
-  background: rgba(8,10,20,.55);
-  border-bottom: 1px solid rgba(255,255,255,.06);
-  z-index:10;
+
+html, body {
+    height: 100%
 }
-.brand{display:flex; gap:12px; align-items:center}
-.logo{
-  width:44px; height:44px; display:grid; place-items:center;
-  border-radius:14px;
-  background: linear-gradient(135deg, rgba(124,58,237,.35), rgba(168,85,247,.10));
-  border:1px solid rgba(255,255,255,.Perfecto, Andrés. Ya vi tus **3 archivos** y aquí está la causa raíz + el plan de ataque en el orden que pediste.
 
----
+body {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+    color: var(--txt);
+    background: radial-gradient(1200px 900px at 20% 10%, #27104a 0%, transparent 60%), radial-gradient(1000px 800px at 85% 20%, #2b124f 0%, transparent 55%), linear-gradient(180deg, var(--bg0), var(--bg1));
+    overflow-x: hidden;
+}
 
-## 1) Por qué **ningún botón funciona** (y cómo diagnosticarlo en 60s)
+.bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: .85
+}
 
-### ✅ Lo más probable (y coincide con tus síntomas)
-Tu `assets/app.js` **no está ejecutando** porque **truena al cargar** por errores de sintaxis/estructura en el archivo. En tu `app.js` actual hay varios “red flags” que rompen el parseo del JS, por ejemplo:
+.glow {
+    position: absolute;
+    width: 700px;
+    height: 700px;
+    filter: blur(70px);
+    border-radius: 50%;
+}
 
-- `escapeHtml()` tiene `.replace(/g, "\>")` (regex inválido / incompleto) y comillas rotas. [1](https://vikher-my.sharepoint.com/personal/andres_mastache_vikher_mx/Documents/Archivos%20de%20Microsoft%C2%A0Copilot%20Chat/app.js)  
-- Hay funciones duplicadas/anidadas accidentalmente: `async function apiPost(...) { async function apiPost(...) { ... }}` y `function buildCopyText(){ function buildCopyText(){...}}` [1](https://vikher-my.sharepoint.com/personal/andres_mastache_vikher_mx/Documents/Archivos%20de%20Microsoft%C2%A0Copilot%20Chat/app.js)  
-- El export a PDF usa `window.open()` y escribe “markdown” (`# Título`) en vez de un documento HTML completo, lo cual explica el “PDF en blanco” y también dispara bloqueador de popups. [1](https://vikher-my.sharepoint.com/personal/andres_mastache_vikher_mx/Documents/Archivos%20de%20Microsoft%C2%A0Copilot%20Chat/app.js)  
+.g1 {
+    left: -220px;
+    top: -220px;
+    background: rgba(124,58,237,.35)
+}
 
-Con que haya **un solo SyntaxError**, el navegador deja de ejecutar el archivo y por eso **no se registran los listeners** → todos los botones “muertos”.
+.g2 {
+    right: -250px;
+    top: -140px;
+    background: rgba(236,72,153,.22)
+}
 
----
+.g3 {
+    right: 10%;
+    bottom: -320px;
+    background: rgba(168,85,247,.20)
+}
 
-# Diagnóstico rápido: Network + Console (paso a paso)
+.topbar {
+    position: sticky;
+    top: 0;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 16px 22px;
+    backdrop-filter: blur(14px);
+    background: rgba(8,10,20,.55);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    z-index: 10;
+}
 
-## A) Verificar que `assets/app.js` sí se carga (Network)
-1) Abre tu web → **F12** → pestaña **Network**  
-2) Activa: ✅ “Disable cache” (solo mientras tengas DevTools abierto)  
-3) Filtro: escribe `app.js` en el buscador de Network  
-4) Recarga (Ctrl+R)  
-5) Debes ver una fila con:
-   - **Status 200** (o 304 pero con tamaño válido)
-   - **Type: script**
-   - **Initiator:** `index.html`
-   - **Response:** código JS
+.brand {
+    display: flex;
+    gap: 12px;
+    align-items: center
+}
 
-📌 Si ves **404** o no aparece:
-- Tu `index.html` carga `assets/app.js` (y `assets/app.css`) [2](https://vikher-my.sharepoint.com/personal/andres_mastache_vikher_mx/Documents/Archivos%20de%20Microsoft%C2%A0Copilot%20Chat/index.html)  
-- Asegúrate de que **existen** en esa ruta:  
-  `.../assets/app.js` y `.../assets/app.css`
+.logo {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(124,58,237,.35), rgba(168,85,247,.10));
+    border: 1px solid rgba(255,255,255,.08);
+    box-shadow: 0 12px 30px rgba(124,58,237,.15);
+}
 
-> Tip: abre directamente `https://TU_DOMINIO/assets/app.js` en el navegador. Si no abre, es ruta.
+.title {
+    font-weight: 800;
+    letter-spacing: .2px
+}
 
----
+.subtitle {
+    font-size: 12.5px;
+    color: var(--muted);
+    opacity: .9
+}
 
-## B) Ver si el JS truena (Console)
-1) Pestaña **Console**
-2) Recarga
-3) Si aparece algo como:
-   - `Uncaught SyntaxError: ...`
-   - `Unexpected token`
-   - `Invalid regular expression`
+.container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 22px;
+}
 
-✅ Eso confirma que **app.js no corrió**, y por eso **ningún botón funciona**.
+.card {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: var(--r);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(16px);
+}
 
----
+.muted {
+    color: var(--muted)
+}
 
-# 2) Arreglo: te dejo los archivos completos listos para copiar/pegar ✅
+h1 {
+    margin: 0 0 8px;
+    font-size: clamp(22px, 2.4vw, 30px);
+    letter-spacing: .2px;
+}
 
-- Corrigen el “JS no corre”
-- Reactivan botones (Ejemplo, Generar, Limpiar, Tabs, Copiar, Exportar)
-- Exportan PDF **sin popups** (usa **iframe hidden** → no lo bloquean)
-- El PDF usa tu CSS (misma estética) + modo print ya definido en tu `app.css` [3](https://vikher-my.sharepoint.com/personal/andres_mastache_vikher_mx/Documents/Archivos%20de%20Microsoft%C2%A0Copilot%20Chat/app.css)
-- Header PDF incluye **pills de Presupuesto mínimo y máximo en 2 líneas** (requerimiento)
+h2 {
+    margin: 0
+}
 
-> ⚠️ Importante: en tu `index.html` se referencia `assets/app.js` y `assets/app.css`. [2](https://vikher-my.sharepoint.com/personal/andres_mastache_vikher_mx/Documents/Archivos%20de%20Microsoft%C2%A0Copilot%20Chat/index.html)  
-> Si tus archivos están en raíz, muévelos a `/assets/` o ajusta las rutas.
+.grid {
+    margin-top: 6px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
 
----
+.card-head {
+    padding: 18px 18px 0;
+}
 
-## ✅ index.html (completo)
+.form {
+    padding: 0 18px 18px
+}
 
-> Cambios: solo agregué `?v=20260320` para “cache busting” y asegurar que no estés viendo un app.js viejo.
+.output {
+    padding: 0 18px 18px
+}
 
-```html
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#6D28D9" />
-  <title>App Hipódromo (Beta)</title>
+.field {
+    margin-top: 14px
+}
 
-  assets/app.css?v=20260320
-  assets/app.css?v=20260320
-</head>
+label {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 8px;
+}
 
-<body>
-  <div class="bg">
-    <div class="glow g1"></div>
-    <div class="glow g2"></div>
-    <div class="glow g3"></div>
-  </div>
+input, select {
+    width: 100%;
+    padding: 12px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(10,14,28,.75);
+    color: var(--txt);
+    outline: none;
+    transition: .15s ease;
+}
 
-  <header class="topbar">
-    <div class="brand">
-      <div class="logo">🏇</div>
-      <div class="brand-text">
-        <div class="title">App Hipódromo</div>
-        <div class="subtitle">Beta • Planes de apuesta “Smart”</div>
-      </div>
-    </div>
-  </header>
+    input:focus, select:focus {
+        border-color: rgba(168,85,247,.65);
+        box-shadow: 0 0 0 4px rgba(124,58,237,.18);
+    }
 
-  <main class="container">
-    <section class="grid">
-      <!-- FORM -->
-      <section class="card form">
-        <div class="card-head">
-          <h2>Generador</h2>
-          <p class="muted">Pega el PDF del Hipódromo y define tu estilo de juego.</p>
-        </div>
+.input-wrap {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
 
-        <div class="field">
-          <label for="pdfUrl">Link del programa (PDF)</label>
-          <div class="input-wrap">
-            <input id="pdfUrl" type="url" inputmode="url" autocomplete="off"
-              placeholder="https://www.hipodromo.com.mx/desktop/images/pdf/programas/10Programa0322Completo.pdf" />
-            <button class="mini" id="btnPasteExample1" type="button">Ejemplo 1</button>
-            <button class="mini" id="btnPasteExample2" type="button">Ejemplo 2</button>
-          </div>
-          <div class="hint" id="pdfHint">Acepta solo links del Hipódromo (sin parámetros ni #).</div>
-          <div class="error" id="pdfError" aria-live="polite"></div>
-        </div>
+    .input-wrap input {
+        flex: 1
+    }
 
-        <div class="row">
-          <div class="field">
-            <label for="venue">Zona</label>
-            <select id="venue">
-              <option value="grada" selected>Grada</option>
-              <option value="restaurantes">Restaurantes</option>
-            </select>
-          </div>
+button {
+    border: 0;
+    cursor: pointer;
+    font-weight: 700;
+    border-radius: 14px;
+    padding: 12px 14px;
+    transition: transform .06s ease, background .15s ease, opacity .15s ease;
+}
 
-          <div class="field">
-            <label for="profile">Perfil</label>
-            <select id="profile">
-              <option value="COBRAR_MAS">Cobrar más</option>
-              <option value="SEGUIDO" selected>Cobrar más seguido</option>
-              <option value="SEGUIDO_EMOCION">Seguido + emoción (20%)</option>
-            </select>
-          </div>
-        </div>
+    button:active {
+        transform: translateY(1px)
+    }
 
-        <div class="row">
-          <div class="field">
-            <label for="budgetMin">Presupuesto mínimo</label>
-            <input id="budgetMin" type="number" min="0" step="10" value="200" />
-          </div>
+.mini {
+    padding: 10px 12px;
+    font-size: 12.5px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.10);
+    color: var(--txt);
+    white-space: nowrap;
+}
 
-          <div class="field">
-            <label for="budgetMax">Presupuesto máximo</label>
-            <input id="budgetMax" type="number" min="0" step="10" value="300" />
-          </div>
-        </div>
+    .mini:hover {
+        background: rgba(255,255,255,.09)
+    }
 
-        <div class="actions">
-          <button id="btnGenerate" class="primary" type="button" disabled>
-            Generar planes
-          </button>
-          <button id="btnClear" class="ghost" type="button">Limpiar</button>
-        </div>
+.hint {
+    font-size: 12.5px;
+    margin-top: 8px;
+    color: rgba(185,179,233,.85)
+}
 
-        <div class="fineprint">
-          <span class="tag">🔒</span>
-          <span>Si tu link es inválido, te lo marcamos en el momento (al pegar).</span>
-        </div>
-      </section>
+.error {
+    font-size: 12.5px;
+    margin-top: 8px;
+    color: #ff86a6;
+    min-height: 18px
+}
 
-      <!-- OUTPUT -->
-      <section class="card output">
-        <div class="card-head">
-          <h2>Resultado</h2>
-          <p class="muted">Aquí verás el plan generado y podrás exportarlo a PDF.</p>
-        </div>
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
 
-        <div class="tabs">
-          <button class="tab active" data-tab="min">Mínimo</button>
-          <button class="tab" data-tab="opt">Optimizado</button>
-          <button class="tab" data-tab="max">Máximo</button>
-        </div>
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
 
-        <div class="panel" id="panel">
-          <div class="empty">
-            <div class="empty-icon">✨</div>
-            <div class="empty-title">Listo para generar</div>
-            <div class="empty-text">Pega un PDF válido y presiona <b>Generar planes</b>.</div>
-          </div>
-        </div>
+.primary {
+    flex: 1;
+    background: linear-gradient(135deg, var(--purple), var(--purple2));
+    color: #fff;
+    box-shadow: 0 14px 30px rgba(124,58,237,.28);
+}
 
-        <div class="divider"></div>
+    .primary:hover {
+        filter: brightness(1.05)
+    }
 
-        <div class="output-actions">
-          <button id="btnCopy" class="ghost" type="button" disabled>Copiar para ventanilla</button>
-          <button id="btnRecalc" class="ghost" type="button" disabled>Recalcular</button>
-          <button id="btnExportPdf" class="ghost" type="button" disabled>Exportar PDF</button>
-        </div>
-      </section>
-    </section>
+    .primary:disabled {
+        opacity: .5;
+        cursor: not-allowed
+    }
 
-    <footer class="footer">
-      <span class="muted">© App Hipódromo (Beta).</span>
-    </footer>
-  </main>
+.ghost {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.10);
+    color: var(--txt);
+}
 
-  <div class="toast-wrap" id="toastWrap" aria-live="polite" aria-atomic="true"></div>
+    .ghost:hover {
+        background: rgba(255,255,255,.09)
+    }
 
-  assets/app.js?v=20260320</script>
-</body>
-</html>
+    .ghost:disabled {
+        opacity: .45;
+        cursor: not-allowed
+    }
+
+.fineprint {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 12.5px;
+    color: rgba(185,179,233,.9);
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px dashed rgba(168,85,247,.35);
+    background: rgba(124,58,237,.08);
+}
+
+.tag {
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 8px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.10);
+}
+
+.tabs {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+}
+
+.tab {
+    padding: 10px 12px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.10);
+    color: var(--txt);
+    font-size: 12.5px;
+}
+
+    .tab.active {
+        background: rgba(124,58,237,.18);
+        border-color: rgba(168,85,247,.45);
+        box-shadow: 0 10px 24px rgba(124,58,237,.18);
+    }
+
+.panel {
+    margin-top: 12px;
+    padding: 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(10,14,28,.55);
+    min-height: 260px;
+}
+
+.empty {
+    height: 260px;
+    display: grid;
+    place-items: center;
+    text-align: center;
+}
+
+.empty-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    background: rgba(124,58,237,.16);
+    border: 1px solid rgba(168,85,247,.38);
+    box-shadow: 0 18px 40px rgba(124,58,237,.18);
+    font-size: 22px;
+}
+
+.empty-title {
+    margin-top: 10px;
+    font-weight: 800
+}
+
+.empty-text {
+    margin-top: 6px;
+    color: rgba(185,179,233,.9);
+    max-width: 300px
+}
+
+.divider {
+    height: 1px;
+    background: rgba(255,255,255,.08);
+    margin: 14px 0;
+}
+
+.output-actions {
+    display: flex;
+    gap: 10px
+}
+
+.footer {
+    margin: 18px 0 10px;
+    text-align: center;
+    opacity: .8;
+    font-size: 12.5px;
+}
+
+.toast-wrap {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    display: grid;
+    gap: 10px;
+    z-index: 999;
+}
+
+.toast {
+    width: 320px;
+    padding: 12px 12px;
+    border-radius: 16px;
+    background: rgba(15,22,51,.92);
+    border: 1px solid rgba(255,255,255,.10);
+    box-shadow: 0 20px 60px rgba(0,0,0,.40);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+    /* Compatibilidad: tu CSS original usaba .t-ic, pero el HTML/JS usa .t-icon */
+    .toast .t-ic,
+    .toast .t-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: rgba(124,58,237,.18);
+        border: 1px solid rgba(168,85,247,.35);
+    }
+
+    .toast .t-title {
+        font-weight: 800
+    }
+
+    .toast .t-msg {
+        margin-top: 2px;
+        font-size: 12.5px;
+        color: rgba(185,179,233,.95)
+    }
+
+    .toast .t-close {
+        margin-left: auto;
+        background: transparent;
+        border: 0;
+        color: rgba(233,231,255,.8);
+        padding: 2px 8px;
+        font-size: 18px;
+    }
+
+        .toast .t-close:hover {
+            color: #fff
+        }
+
+@media (max-width: 980px) {
+    .grid {
+        grid-template-columns: 1fr
+    }
+}
+
+@media (max-width: 560px) {
+    .row {
+        grid-template-columns: 1fr
+    }
+
+    .input-wrap {
+        flex-direction: column;
+        align-items: stretch
+    }
+
+    .mini {
+        width: 100%
+    }
+}
+
+/* ==========================================================
+   PLAN UI + PRINT
+========================================================== */
+.plan-card {
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px;
+    background: rgba(15,22,51,.55);
+    box-shadow: 0 16px 45px rgba(0,0,0,.30);
+    padding: 14px;
+}
+
+.plan-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.plan-head-left {
+    display: grid;
+    gap: 8px
+}
+
+.plan-title {
+    font-weight: 900;
+    letter-spacing: .2px
+}
+
+.plan-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px
+}
+
+.plan-head-right {
+    margin-left: auto;
+    display: grid;
+    gap: 8px;
+    justify-items: end
+}
+
+.pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end
+}
+
+.pill-strong {
+    background: rgba(124,58,237,.18);
+    border-color: rgba(168,85,247,.45)
+}
+
+.mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 12px
+}
+
+@media (max-width: 560px) {
+    .plan-head {
+        flex-direction: column;
+        align-items: stretch
+    }
+
+    .plan-head-right {
+        margin-left: 0;
+        justify-items: start
+    }
+
+    .pill-row {
+        justify-content: flex-start
+    }
+}
+
+.plan-sub {
+    margin-top: 10px;
+    display: grid;
+    gap: 6px;
+}
+
+.plan-total {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(124,58,237,.10);
+}
+
+.plan-bets {
+    margin-top: 12px;
+    display: grid;
+    gap: 10px;
+}
+
+.bet-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(10,14,28,.50);
+}
+
+    .bet-row b {
+        font-weight: 800
+    }
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(168,85,247,.45);
+    background: rgba(124,58,237,.12);
+    font-size: 11.5px;
+    margin-left: 8px;
+}
+
+/* Print wrapper */
+.print-wrap {
+    padding: 0;
+}
+
+/* Impresión a PDF: fondo blanco y legible, sin perder estructura */
+@media print {
+    :root {
+        --txt: #111;
+        --muted: #444;
+    }
+
+    body {
+        background: #fff !important;
+        color: #111 !important;
+    }
+
+    .bg, .glow, .topbar, .toast-wrap {
+        display: none !important;
+    }
+
+    .card, .panel, .plan-card {
+        background: #fff !important;
+        box-shadow: none !important;
+        border-color: #ddd !important;
+    }
+
+    .plan-total {
+        background: #f5f2ff !important;
+        border-color: #ddd !important;
+    }
+
+    .bet-row {
+        background: #fff !important;
+        border-color: #ddd !important;
+    }
+
+    .tag {
+        background: #f5f2ff !important;
+        border-color: #bbb !important;
+    }
+}
