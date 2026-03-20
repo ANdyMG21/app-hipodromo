@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../app-hipodromo-api/app-hipodromo-api.csproj" />
+  <Project Path="app-hipodromo-origin.csproj" />
+</Solution>
