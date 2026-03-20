@@ -1,21 +1,23 @@
-﻿(() => {
+(() => {
   "use strict";
 
-  // =============================
-  // Debug: confirma carga
-  // =============================
   console.log("[AppHipodromo] app.js cargado", new Date().toISOString());
 
   // =============================
   // Config
   // =============================
-  const API_BASE = "https://api.andymg.com";
+  // ✅ Auto: en localhost usa API local (evita CORS y bloqueos)
+  //    Ajusta el puerto si tu API corre en otro (ej. 7001, 7066, etc.)
+  const LOCAL_API_DEFAULT = "https://localhost:7043";
+  const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+    ? LOCAL_API_DEFAULT
+    : "https://api.andymg.com";
+
   const EXAMPLE_1 = "https://www.hipodromo.com.mx/desktop/images/pdf/programas/10Programa0322Completo.pdf";
   const EXAMPLE_2 = "https://www.hipodromo.com.mx/desktop/images/pdf/programas/09Programa0321Completo.pdf";
 
   const ALLOWED_HOSTS = new Set(["www.hipodromo.com.mx", "hipodromo.com.mx"]);
   const ALLOWED_PREFIX = "/desktop/images/pdf/programas/";
-  // NNProgramaMMDDCompleto.pdf (o Completo1, Completo2...)
   const FILENAME_RE = /^\d{2}Programa(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])Completo(\d+)?\.pdf$/i;
 
   // =============================
@@ -41,7 +43,6 @@
   const tabs = Array.from(document.querySelectorAll(".tab"));
   const toastWrap = document.getElementById("toastWrap");
 
-  // Guard rails: si algo no existe, no seguimos (evita errores silenciosos)
   const required = [
     pdfUrl, pdfHint, pdfError, venue, profile, budgetMin, budgetMax,
     btnGenerate, btnClear, btnCopy, btnRecalc, btnExample1, btnExample2,
@@ -69,7 +70,7 @@
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
+      .replace(/\"/g, "&quot;")
       .replace(/'/g, "&#39;");
   }
 
@@ -86,7 +87,7 @@
     `;
     t.querySelector(".t-close").addEventListener("click", () => t.remove());
     toastWrap.appendChild(t);
-    setTimeout(() => t.remove(), 4200);
+    setTimeout(() => t.remove(), 5200);
   }
 
   function setFieldState(ok, message = "") {
@@ -107,15 +108,11 @@
 
   function setBusy(busy) {
     isBusy = busy;
-
     btnGenerate.disabled = busy || !canGenerate();
     btnClear.disabled = busy;
-
     btnCopy.disabled = busy || !lastOutput;
     btnRecalc.disabled = busy || !lastOutput?.plan_id;
-
     if (btnExportPdf) btnExportPdf.disabled = busy || !lastOutput;
-
     btnGenerate.textContent = busy ? "Generando…" : "Generar planes";
   }
 
@@ -205,11 +202,11 @@
 
     const filename = (u.pathname.split("/").pop() || "");
     if (!FILENAME_RE.test(filename)) {
-      return { ok: false, code: "BAD_FILENAME", message: "Debe ser tipo NNProgramaMMDDCompleto.pdf (o Completo1, Completo2...)."};
+      return { ok: false, code: "BAD_FILENAME", message: "Debe ser tipo NNProgramaMMDDCompleto.pdf (o Completo1, Completo2...)." };
     }
 
     if (u.search || u.hash) {
-      return { ok: false, code: "NO_PARAMS", message: "Quita parámetros (?...) o fragmentos (#...)."};
+      return { ok: false, code: "NO_PARAMS", message: "Quita parámetros (?...) o fragmentos (#...)." };
     }
 
     return { ok: true, code: "OK", message: "Link válido ✅" };
@@ -245,7 +242,6 @@
 
     const text = await res.text().catch(() => "");
     if (!text.trim()) return null;
-
     const snippet = text.slice(0, 220).replace(/\s+/g, " ").trim();
     throw new Error(
       "Respuesta no-JSON. Posible redirección/bloqueo intermedio." +
@@ -253,38 +249,51 @@
     );
   }
 
-  async function apiPost(path, body) {
+  async function apiPost(path, body, timeoutMs = 20000) {
     const url = `${API_BASE}${path}`;
 
-    // ✅ NO cookies para evitar CORS estricto
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "omit",
-      body: body ? JSON.stringify(body) : null
-    });
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), timeoutMs);
 
-    const data = await safeReadJson(res);
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "omit",
+        body: body ? JSON.stringify(body) : null,
+        signal: ctrl.signal
+      });
 
-    if (!res.ok) {
-      if (data?.issues && Array.isArray(data.issues) && data.issues.length) {
-        const first = data.issues[0];
-        const pathTxt = (first.path || []).join(".");
-        throw new Error(`${pathTxt ? pathTxt + ": " : ""}${first.message || "Validación fallida"}`);
+      const data = await safeReadJson(res);
+
+      if (!res.ok) {
+        if (data?.issues && Array.isArray(data.issues) && data.issues.length) {
+          const first = data.issues[0];
+          const pathTxt = (first.path || []).join(".");
+          throw new Error(`${pathTxt ? pathTxt + ": " : ""}${first.message || "Validación fallida"}`);
+        }
+        throw new Error(data?.error || `Error HTTP ${res.status}`);
       }
-      throw new Error(data?.error || `Error HTTP ${res.status}`);
-    }
 
-    return data ?? {};
+      return data ?? {};
+    } catch (e) {
+      if (e?.name === "AbortError") {
+        throw new Error(
+          `Tiempo de espera agotado (${Math.round(timeoutMs/1000)}s). ` +
+          `Revisa que el API esté arriba y accesible. API_BASE=${API_BASE}`
+        );
+      }
+      throw e;
+    } finally {
+      clearTimeout(t);
+    }
   }
 
   // =============================
   // Rendering
   // =============================
   function labelForTab(tabKey) {
-    if (tabKey === "min") return "Plan mínimo";
-    if (tabKey === "opt") return "Plan optimizado";
-    return "Plan máximo";
+    return tabKey === "min" ? "Plan mínimo" : tabKey === "opt" ? "Plan optimizado" : "Plan máximo";
   }
 
   function renderPlan(tabKey) {
@@ -307,7 +316,6 @@
         </div>
 
         <div class="plan-head-right">
-          <!-- Requerimiento: pills presupuesto en 2 líneas -->
           <div class="pill-row">
             <span class="pill pill-strong">💰 Presupuesto mínimo: <b>${escapeHtml(formatCurrency(b.min))}</b></span>
           </div>
@@ -318,7 +326,6 @@
       </div>
     `;
 
-    // Caso A: backend devuelve plans.min/opt/max
     const plan = lastOutput?.plans?.[tabKey];
     if (plan) {
       const totalHtml = `
@@ -359,7 +366,6 @@
       return;
     }
 
-    // Caso B: backend actual: solo resumen
     const received = lastOutput?.result?.received ?? null;
     const generatedAt = lastOutput?.result?.generatedAt ?? null;
 
@@ -384,6 +390,7 @@
         </div>
       </div>
     `;
+
     lastRenderedHtml = panel.innerHTML;
 
     btnCopy.disabled = false;
@@ -394,7 +401,6 @@
   function buildCopyText() {
     if (!lastOutput) return "";
 
-    // Si ya tenemos plans
     const plan = lastOutput?.plans?.[activeTab];
     if (plan) {
       const m = resolveMeta();
@@ -413,7 +419,6 @@
       return lines.join("\n");
     }
 
-    // Fallback resumen
     const r = lastOutput?.result?.received ?? {};
     const lines = [];
     lines.push("Plan generado (resumen)");
@@ -429,29 +434,24 @@
   function cloneStylesTo(docTarget) {
     const targetHead = docTarget.head;
 
-    // base para resolver rutas relativas
     const base = docTarget.createElement("base");
     base.href = new URL("./", window.location.href).href;
     targetHead.appendChild(base);
 
-    // Copia hojas CSS externas (absolutas)
     document.querySelectorAll('link[rel="stylesheet"]').forEach(node => {
       const href = node.getAttribute("href");
       if (!href) return;
       const abs = new URL(href, window.location.href).href;
-
       const l = docTarget.createElement("link");
       l.rel = "stylesheet";
       l.href = abs;
       targetHead.appendChild(l);
     });
 
-    // Copia estilos inline
     document.querySelectorAll("style").forEach(node => {
       targetHead.appendChild(node.cloneNode(true));
     });
 
-    // Ajustes de impresión
     const extra = docTarget.createElement("style");
     extra.textContent = `
       @page { margin: 14mm; }
@@ -469,7 +469,6 @@
     const html = lastRenderedHtml || panel.innerHTML || "";
     const title = labelForTab(activeTab);
 
-    // iframe hidden (no popup)
     const iframe = document.createElement("iframe");
     iframe.style.position = "fixed";
     iframe.style.right = "0";
@@ -479,7 +478,6 @@
     iframe.style.border = "0";
     iframe.style.opacity = "0";
     iframe.setAttribute("aria-hidden", "true");
-
     document.body.appendChild(iframe);
 
     const doc = iframe.contentDocument || iframe.contentWindow.document;
@@ -501,7 +499,6 @@
 
     cloneStylesTo(doc);
 
-    // espera a que el iframe pinte estilos
     setTimeout(() => {
       try {
         iframe.contentWindow.focus();
@@ -510,7 +507,6 @@
         console.error(e);
         toast("Error al imprimir", "No se pudo abrir el diálogo de impresión.", "❌");
       } finally {
-        // limpia
         setTimeout(() => iframe.remove(), 800);
       }
     }, 500);
@@ -591,10 +587,9 @@
 
     try {
       setBusy(true);
-      const data = await apiPost("/api/plans", payload);
+      const data = await apiPost("/api/plans", payload, 20000);
       lastOutput = data;
       renderPlan(activeTab);
-
       const pid = data?.plan_id ? ` (${data.plan_id})` : "";
       toast("Generado", `Plan listo${pid}`, "✅");
     } catch (e) {
@@ -623,7 +618,7 @@
 
     try {
       setBusy(true);
-      const data = await apiPost(`/api/plans/${encodeURIComponent(lastOutput.plan_id)}/recalculate`, {});
+      const data = await apiPost(`/api/plans/${encodeURIComponent(lastOutput.plan_id)}/recalculate`, {}, 20000);
       lastOutput = data;
       renderPlan(activeTab);
       toast("Recalculado", "Plan actualizado con settings actuales.", "🔁");
